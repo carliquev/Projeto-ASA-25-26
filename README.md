@@ -1,79 +1,181 @@
 # Projeto-ASA-25-26
 
-# ASA 2025/2026 – Projeto 1
+# Projeto — Análise e Síntese de Algoritmos (ASA)  
+## Instituto Superior Técnico — 2025/2026
 
-Este repositório contém uma solução para o 1.º projeto de **Análise e Síntese de Algoritmos** (ASA) 2025/2026 do IST, sobre maximização da energia libertada ao remover aminoácidos de uma cadeia. [attached_file:file:1]
+**Data do enunciado:** 15 de Novembro de 2025  
+**Data limite de entrega:** 5 de Dezembro de 2025  
 
-## Descrição informal do problema
+---
 
-Dada uma cadeia de \(n\) aminoácidos \(a_1, \dots, a_n\), cada aminoácido \(a_i\) tem:
-- Um potencial \(P_i > 0\).
-- Uma classe bioquímica \(C(i) \in \{P, N, A, B\}\). [attached_file:file:1]
+## 📘 Descrição do Problema
 
-As posições 0 e \(n+1\) são “terminais” com potencial 1 e classe especial \(T\), tal que a afinidade com qualquer classe é 1. [attached_file:file:1]
+O jogo consiste em remover aminoácidos de uma cadeia `a₁ … aₙ`.  
+Cada remoção liberta energia, dependente de:
 
-Quando se remove um aminoácido \(a_i\), a energia libertada é:
-\[
-E_{\text{libertada}} =
-P_{i-1} \cdot Af(C(i-1), C(i)) \cdot P_i
-+ P_i \cdot Af(C(i), C(i+1)) \cdot P_{i+1}
-\]
-onde \(Af\) é a afinidade entre classes, dada por uma tabela não simétrica. [attached_file:file:1]
+- potencial do aminoácido: `Pᵢ`
+- potencial dos vizinhos: `Pᵢ₋₁` e `Pᵢ₊₁`
+- afinidade entre classes bioquímicas  
+  - **P** (Polar)  
+  - **N** (Não-Polar)  
+  - **A** (Ácido)  
+  - **B** (Base)
 
-O objetivo é determinar a ordem de remoção de todos os aminoácidos que **maximiza o somatório da energia total libertada**; em caso de empate, escolhe‑se a sequência lexicograficamente menor. [attached_file:file:1]
+A energia libertada ao remover `aᵢ` é:
 
-## Formato de input
+```
+E = P(i−1) × Af(C(i−1), C(i)) × P(i)
+  + P(i)   × Af(C(i), C(i+1)) × P(i+1)
+```
 
-O programa lê de `stdin`:
+### Afinidade Af(c₁, c₂)
 
-1. Uma linha com um inteiro \(n \ge 1\).
-2. Uma linha com \(n\) inteiros \(P_1, \dots, P_n\) (potenciais).
-3. Uma linha com uma string de \(n\) caracteres com as classes \(C(1), \dots, C(n)\), cada uma em `{P, N, A, B}`. [attached_file:file:1]
+| Af | P | N | A | B |
+|----|---|---|---|---|
+| **P** | 1 | 3 | 1 | 3 |
+| **N** | 5 | 1 | 0 | 1 |
+| **A** | 0 | 1 | 0 | 4 |
+| **B** | 1 | 3 | 2 | 3 |
 
-## Formato de output
+Extremidades (`0` e `n+1`) têm:
 
-O programa escreve em `stdout`:
+- potencial = **1**
+- classe = **T**  
+- afinidade neutra: `Af(T,c) = Af(c,T) = 1`
 
-1. Uma linha com o valor da energia total libertada máxima.
-2. Uma linha com a ordem de remoção (permutação de `1..n`, separada por espaços) que atinge esse valor; em caso de múltiplas ordens ótimas, imprime‑se a lexicograficamente menor. [attached_file:file:1]
+🎯 **Objetivo:** determinar a ordem de remoção dos aminoácidos que maximiza a energia total libertada.  
+Se houver mais do que uma ordem ótima, devolver a lexicograficamente menor.
 
-## Implementação
+---
 
-- Linguagem recomendada: **C++** (aceitam‑se também Java/Python, mas são desaconselhados). [attached_file:file:1]
-- O programa deve ser iterativo (soluções recursivas podem rebentar a pilha em testes grandes). [attached_file:file:1]
-- O executável deve:
-  - Ler **apenas** de `stdin`.
-  - Escrever **apenas** para `stdout`. [attached_file:file:1]
+## 📥 Input
 
-Comandos de compilação sugeridos:
+1. Um inteiro `n ≥ 1`
+2. Linha com `n` inteiros (potenciais > 0)
+3. Linha com `n` caracteres (classes `P`, `N`, `A`, `B`)
 
-- C++: `g++ -std=c++11 -O3 -Wall file.cpp -lm`
-- C: `gcc -O3 -ansi -Wall file.c -lm`
-- Java: `javac File.java` e `java -Xss32m -Xmx256m -classpath . File`
-- Python: `python3 file.py`
-- Rust: `rustc -C opt-level=3 --edition=2021 file.rs` [attached_file:file:1]
+---
 
-## Submissão
+## 📤 Output
 
-- **Código fonte**: submetido no **Mooshak**, seguindo a linguagem escolhida (extensão do ficheiro identifica a linguagem). [attached_file:file:1]
-- **Relatório**: submetido no **Fénix**, em PDF, máx. 2 páginas, fonte 12pt, margens 3 cm, contendo:
-  - Descrição da solução.
-  - Análise teórica.
-  - Avaliação experimental.
-  - Referências usadas. [attached_file:file:1]
+1. Energia total libertada  
+2. Ordem de remoção (índices 1-based) separados por espaços  
+   - se houver várias soluções ótimas → devolver a lexicograficamente menor
 
-Apenas a **última submissão** (código + relatório) é considerada para avaliação. [attached_file:file:1]
+---
 
-## Avaliação
+## 🧪 Exemplos
 
-- Avaliação automática no Mooshak:
-  - 85% da nota, usando testes ocultos com limites de tempo e memória.
-  - Comparação de outputs via `diff output result`. [attached_file:file:1]
-- Relatório:
-  - 15% da nota final. [attached_file:file:1]
+### Exemplo 1
 
-Código que não compila, não respeita o formato de I/O, ou usa estratégias “hard‑coded” para inputs concretos pode receber nota 0 ou sofrer cortes. [attached_file:file:1]
+**Input**
+```
+3
+10 5 12
+ABA
+```
 
-## Detecção de cópias
+**Output**
+```
+359
+1 2 3
+```
 
-Qualquer forma de plágio ou submissão de código não desenvolvido pelo(s) aluno(s) implica reprovação na UC e comunicação às entidades competentes do IST, com penalizações de acordo com o regulamento da Universidade. [attached_file:file:1]
+---
+
+### Exemplo 2
+
+**Input**
+```
+9
+4 2 7 3 5 1 2 8 3
+ANBPAPBNA
+```
+
+**Output**
+```
+607
+2 1 4 6 5 7 8 9 3
+```
+
+---
+
+## 🛠 Implementação
+
+Programação preferencial: **C++**.  
+Java e Python são aceites mas **desaconselhados** (possível timeout).
+
+Evitar soluções recursivas → risco de *stack overflow* em testes grandes.
+
+### Parâmetros de compilação
+
+```
+C++: g++ -std=c++11 -O3 -Wall file.cpp -lm
+C:   gcc -O3 -ansi -Wall file.c -lm
+Javac: javac File.java
+Java:  java -Xss32m -Xmx256m -classpath . File
+Python: python3 file.py
+Rust: rustc -C opt-level=3 --edition=2021 file.rs
+```
+
+---
+
+## 📤 Submissão
+
+### ✔ Código fonte — Mooshak  
+O código deve:
+
+- compilar sem erros  
+- ler de stdin  
+- escrever para stdout  
+
+Apenas **a última submissão conta**.
+
+### ✔ Relatório — Fénix  
+Formato:
+
+- PDF  
+- máx. 2 páginas  
+- fonte 12pt  
+- margens 3 cm  
+
+Conteúdo:
+
+- descrição da solução  
+- análise teórica  
+- avaliação experimental  
+- referências  
+
+---
+
+## 🧮 Avaliação
+
+- 85% — avaliação automática (Mooshak)  
+- 15% — relatório  
+
+Avaliação automática usa:
+
+```
+diff output result
+```
+
+Nota varia entre 0 e 170.
+
+Código com truques para casos específicos pode ser penalizado.
+
+---
+
+## ⚠ Detecção de Cópias
+
+Plágio implica:
+
+- reprovação imediata  
+- comunicação ao Conselho Pedagógico  
+- penalizações conforme regras da Universidade  
+
+---
+
+## 📎 Observação Final
+
+Todos os testes serão divulgados **após** o deadline.  
+Os estudantes são encorajados a submeter versões preliminares cedo.(s) aluno(s) implica reprovação na UC e comunicação às entidades competentes do IST, com penalizações de acordo com o regulamento da Universidade. [attached_file:file:1]

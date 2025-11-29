@@ -8,6 +8,7 @@ using namespace std;
 #define B 4
 
 struct aA {
+    int id;
     int ePot;
     int classe;
 };

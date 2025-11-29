@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 
+#define T 0
 #define P 1
 #define N 2
 #define A 3
@@ -13,6 +14,9 @@ struct aA {
 
 //Calcula afinidade(classe1, classe2)
 int af(int c1, int c2){
+    if (c1 == T || c2 == T) {
+        return 1;
+    }
     if (c1 == P){
         if (c2 == P){
             return 1;

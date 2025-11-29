@@ -6,7 +6,7 @@ using namespace std;
 #define A 3
 #define B 4
 
-struct aa {
+struct aA {
     int ePot;
     int classe;
 };
@@ -73,6 +73,6 @@ int af(int c1, int c2){
 }
 
 //Calcula a energia libertada
-int eLib(int ePot, int ePotE, int ePotD, int af){
-
+int eLib(aA a, aA aEsq, aA aDir){
+    return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }

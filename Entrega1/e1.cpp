@@ -1,4 +1,8 @@
 #include <iostream>
+#include <sstream>
+#include <vector>
+//#include <fstream>
+#include <string>
 using namespace std;
 
 #define T 0
@@ -82,4 +86,66 @@ int eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-int main(){}
+vector<int> eMax(vector<int> &chain){
+
+}
+
+int main(){
+
+
+
+
+    //Ler input dos testes
+    //Primeira linha
+    int numAA;
+
+    cin >> numAA; // Lê tamanho do aminoacido
+    cin.ignore();
+
+    //Segunda linha
+    string pesosAA;
+    getline(cin, pesosAA);
+
+    stringstream ss(pesosAA);
+    Vector<aA> aminoacidos(numAA + 2); // T inicial e final
+    //Aminoacido T inicial
+    aA limiteI;
+    limiteI.classe = T;
+    limiteI.ePot =1;
+    limiteI.id =0;
+
+    aminoacidos[0] = limiteI;
+
+
+    //vector<int> pesos;
+    int peso;
+    for (int i = 1; i <= numAA; i++){
+        ss>>peso;
+
+    }
+    while (ss >> temp){
+        pesos.push_back(temp);
+    }
+
+    //Terceira linha
+    string classes;
+    getline(cin, classes);
+
+    /*
+    cout << "n = " << tamanhoAA << "\n";
+
+    cout << "nums: ";
+
+    for (int v : pesos) cout << v << " ";
+    cout << "\n";
+
+    cout << "text = " << classes << "\n";
+    */
+
+
+
+
+
+
+
+}

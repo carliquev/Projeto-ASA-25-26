@@ -206,13 +206,15 @@ int main(){
     vector<vector<int>> v = std::get<1>(result);
     vector<int> y = v[0];
 
-    for (vector<int> a : v) {
-        for (int k : a) {
-            cout<< k<< " ";
-        }
-        cout << endl;
 
+    for (size_t i =0; i<y.size();i++) {
+        if (i != y.size() - 1) {
+            cout<< y[i] << " ";
+        }else {
+            cout<< y[i] << "\n";
+        }
     }
+
 
 
 

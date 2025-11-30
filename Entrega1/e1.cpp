@@ -23,62 +23,6 @@ int af(int c1, int c2){
     if (c1 == T || c2 == T) {
         return 1;
     }
-    /*if (c1 == P){
-        if (c2 == P){
-            return 1;
-        }
-        else if (c2 == N){
-            return 5;
-        }
-        else if (c2 == A){
-            return 0;
-        }
-        else if (c2 == B){
-            return 1;
-        }
-    }
-    else if (c1 == N){
-        if (c2 == P){
-            return 3;
-        }
-        else if (c2 == N){
-            return 1;
-        }
-        else if (c2 == A){
-            return 1;
-        }
-        else if (c2 == B){
-            return 3;
-        }
-    }
-    else if (c1 == A){
-        if (c2 == P){
-            return 1;
-        }
-        else if (c2 == N){
-            return 0;
-        }
-        else if (c2 == A){
-            return 0;
-        }
-        else if (c2 == B){
-            return 2;
-        }
-    }
-    else if (c1 == B){
-        if (c2 == P){
-            return 3;
-        }
-        else if (c2 == N){
-            return 1;
-        }
-        else if (c2 == A){
-            return 4;
-        }
-        else if (c2 == B){
-            return 3;
-        }
-    }*/
 
     if (c1 == P){
         if (c2 == P){

@@ -14,7 +14,7 @@ using namespace std;
 
 struct aA {
     int id;
-    long long ePot;
+    int ePot;
     int classe;
 };
 

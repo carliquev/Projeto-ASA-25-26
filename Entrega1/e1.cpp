@@ -3,6 +3,7 @@
 #include <vector>
 //#include <fstream>
 #include <string>
+#include <tuple>
 using namespace std;
 
 #define T 0
@@ -86,15 +87,49 @@ int eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-vector<int> eMax(vector<int> &chain){
+tuple<int, vector<vector<int>>> eMax(vector<aA> chain){
+    int changed, maxi;
+    int n = chain.size()-2;
+    vector< vector<int> > dp(n+2, vector<int> (n+2, 0));
+    vector< vector<int> > sols;
 
+    for(int i= n; i>=1; i--){
+        for(int j = 1; j<=n; j++){
+            changed = 0;
+            if(i>j) continue;
+            maxi = 0;
+            vector<int> sol;
+
+            for(int k = i; k<=j; k++){
+                int e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
+                if (e >= maxi) {
+                    if (e == maxi) {
+                        changed = 1;
+                    }
+                    if (e > maxi) {
+                        changed = 2;
+                    }
+                    maxi = e;
+                    sol.push_back(k); //TODO verificar se n temos de dar reset do sol
+                }
+            }
+            // Se e == maxi
+            if (changed == 1) {
+                sols.push_back(sol);
+            // Se e > maxi
+            } else if (changed == 2) {
+                sols.clear();
+                sols.push_back(sol);
+                dp[i][j]= maxi;
+            }
+        }
+
+    }
+
+    return {dp[1][n], sols};
 }
 
 int main(){
-
-
-
-
     //Ler input dos testes
     //Primeira linha
     int numAA;
@@ -105,9 +140,11 @@ int main(){
     //Segunda linha
     string pesosAA;
     getline(cin, pesosAA);
-
     stringstream ss(pesosAA);
-    Vector<aA> aminoacidos(numAA + 2); // T inicial e final
+
+
+
+    vector<aA> aminoacidos(numAA + 2); // T inicial e final
     //Aminoacido T inicial
     aA limiteI;
     limiteI.classe = T;
@@ -116,34 +153,70 @@ int main(){
 
     aminoacidos[0] = limiteI;
 
-
-    //vector<int> pesos;
-    int peso;
-    for (int i = 1; i <= numAA; i++){
-        ss>>peso;
-
-    }
-    while (ss >> temp){
-        pesos.push_back(temp);
-    }
-
     //Terceira linha
     string classes;
     getline(cin, classes);
 
+    //vector<int> pesos;
+    int peso;
+    int tipo=1;
+    int i =1;
+    for (char c : classes) {
+        ss>>peso;
+        switch (c) {
+            case 'A':
+                tipo = A; break;
+            case 'B':
+                tipo = B; break;
+            case 'N':
+                tipo = N; break;
+            case 'P':
+                tipo = P; break;
+            default:
+                break;
+        }
+        aminoacidos[i].id = i;
+        aminoacidos[i].classe = tipo;
+        aminoacidos[i].ePot = peso;
+        i++;
+    }
+    aA limiteF;
+    limiteF.classe = T;
+    limiteF.ePot =1;
+    limiteF.id =i;
+    aminoacidos[i] = limiteF;
+
+
+    tuple<int, vector<vector<int>>> result = eMax(aminoacidos);
+
+    cout<<get<0>(result)<<endl;
+
+    vector<vector<int>> v = std::get<1>(result);
+    vector<int> y = v[0];
+
+    for (vector<int> a : v) {
+        for (int k : a) {
+            cout<< k<< " ";
+        }
+        cout << endl;
+
+    }
+
+
+
     /*
-    cout << "n = " << tamanhoAA << "\n";
+    cout << "n = " << numAA << "\n";
 
     cout << "nums: ";
 
-    for (int v : pesos) cout << v << " ";
+    for (aA v : aminoacidos) cout << v.id << " " << v.classe << " " << v.ePot << " ";
     cout << "\n";
 
     cout << "text = " << classes << "\n";
     */
 
 
-
+    return 0;
 
 
 

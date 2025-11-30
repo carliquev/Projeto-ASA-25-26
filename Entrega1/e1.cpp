@@ -23,6 +23,63 @@ int af(int c1, int c2){
     if (c1 == T || c2 == T) {
         return 1;
     }
+    /*if (c1 == P){
+        if (c2 == P){
+            return 1;
+        }
+        else if (c2 == N){
+            return 5;
+        }
+        else if (c2 == A){
+            return 0;
+        }
+        else if (c2 == B){
+            return 1;
+        }
+    }
+    else if (c1 == N){
+        if (c2 == P){
+            return 3;
+        }
+        else if (c2 == N){
+            return 1;
+        }
+        else if (c2 == A){
+            return 1;
+        }
+        else if (c2 == B){
+            return 3;
+        }
+    }
+    else if (c1 == A){
+        if (c2 == P){
+            return 1;
+        }
+        else if (c2 == N){
+            return 0;
+        }
+        else if (c2 == A){
+            return 0;
+        }
+        else if (c2 == B){
+            return 2;
+        }
+    }
+    else if (c1 == B){
+        if (c2 == P){
+            return 3;
+        }
+        else if (c2 == N){
+            return 1;
+        }
+        else if (c2 == A){
+            return 4;
+        }
+        else if (c2 == B){
+            return 3;
+        }
+    }*/
+
     if (c1 == P){
         if (c2 == P){
             return 1;
@@ -90,16 +147,17 @@ int eLib(aA a, aA aEsq, aA aDir){
 tuple<int, vector<vector<int>>> eMax(vector<aA> chain){
     int changed, maxi;
     int n = chain.size()-2;
-    vector< vector<int> > dp(n+2, vector<int> (n+2, 0));
-    vector< vector<int> > sols;
+    vector<vector<int>> dp(n+2, vector<int> (n+2, 0));
+    vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
+
+    vector<vector<int>> sols;
 
     for(int i= n; i>=1; i--){
         for(int j = 1; j<=n; j++){
-            changed = 0;
             if(i>j) continue;
+            changed = 0;
             maxi = 0;
             vector<int> sol;
-
             for(int k = i; k<=j; k++){
                 int e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
@@ -110,18 +168,27 @@ tuple<int, vector<vector<int>>> eMax(vector<aA> chain){
                         changed = 2;
                     }
                     maxi = e;
-                    sol.push_back(k); //TODO verificar se n temos de dar reset do sol
+                    sol = ordem[i][k-1];
+                    sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
+                    sol.push_back(k);
                 }
             }
             // Se e == maxi
             if (changed == 1) {
                 sols.push_back(sol);
+                dp[i][j]= maxi;
+                ordem[i][j] = sol;
             // Se e > maxi
             } else if (changed == 2) {
                 sols.clear();
                 sols.push_back(sol);
                 dp[i][j]= maxi;
+                ordem[i][j] = sol;
             }
+
+
+
+
         }
 
     }

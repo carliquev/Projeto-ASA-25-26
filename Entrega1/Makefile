@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -O3 -Wall
 LDFLAGS = -lm
 
-TARGET = e1
+TARGET = e1.o
 SRC = e1.cpp
 
 all: $(TARGET)

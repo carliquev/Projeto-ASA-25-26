@@ -92,8 +92,8 @@ tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
     int changed;
     long long maxi=0;
     int n = chain.size()-2;
-    vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0));
-    vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
+    vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0)); //reduzir um destes (meter so n em vez de n+2 e ver se tamos ou nao a sair da matriz)
+    vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>())); //reduzir um destes
 
     vector<vector<int>> sols;
 

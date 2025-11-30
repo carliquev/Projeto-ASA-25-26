@@ -14,12 +14,12 @@ using namespace std;
 
 struct aA {
     int id;
-    int ePot;
+    long long ePot;
     int classe;
 };
 
 //Calcula afinidade(classe1, classe2)
-int af(int c1, int c2){
+long long af(int c1, int c2){
     if (c1 == T || c2 == T) {
         return 1;
     }
@@ -84,14 +84,15 @@ int af(int c1, int c2){
 }
 
 //Calcula a energia libertada
-int eLib(aA a, aA aEsq, aA aDir){
+long long eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-tuple<int, vector<vector<int>>> eMax(vector<aA> chain){
-    int changed, maxi;
+tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
+    int changed;
+    long long maxi=0;
     int n = chain.size()-2;
-    vector<vector<int>> dp(n+2, vector<int> (n+2, 0));
+    vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0));
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
 
     vector<vector<int>> sols;
@@ -103,7 +104,7 @@ tuple<int, vector<vector<int>>> eMax(vector<aA> chain){
             maxi = 0;
             vector<int> sol;
             for(int k = i; k<=j; k++){
-                int e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
+                long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
                     if (e == maxi) {
                         changed = 1;
@@ -198,7 +199,7 @@ int main(){
     aminoacidos[i] = limiteF;
 
 
-    tuple<int, vector<vector<int>>> result = eMax(aminoacidos);
+    tuple<long long, vector<vector<int>>> result = eMax(aminoacidos);
 
     cout<<get<0>(result)<<endl;
 
@@ -213,18 +214,6 @@ int main(){
 
     }
 
-
-
-    /*
-    cout << "n = " << numAA << "\n";
-
-    cout << "nums: ";
-
-    for (aA v : aminoacidos) cout << v.id << " " << v.classe << " " << v.ePot << " ";
-    cout << "\n";
-
-    cout << "text = " << classes << "\n";
-    */
 
 
     return 0;

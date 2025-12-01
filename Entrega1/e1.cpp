@@ -89,52 +89,41 @@ long long eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
-    int changed;
+tuple<long long, vector<int>> eMax(vector<aA> chain){
     long long maxi;
     int n = chain.size()-2;
     vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0)); //reduzir um destes (meter so n em vez de n+2 e ver se tamos ou nao a sair da matriz)
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>())); //reduzir um destes
 
-    vector<vector<int>> sols;
+    vector<int> bestSol;
 
     for(int i= n; i>=1; i--){ // i = n-1; i>=0
         for(int j = 1; j<=n; j++){ // j<n
             if(i>j) continue;
-            changed = 0;
             maxi = 0;
             vector<int> sol;
             for(int k = i; k<=j; k++){
                 long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    if (e == maxi) {
-                        changed = 1;
-                    }
-                    if (e > maxi) {
-                        changed = 2;
-                    }
-                    maxi = e;
                     sol = ordem[i][k-1];
                     sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
                     sol.push_back(k);
+                    if (e == maxi) {
+                        if (sol<bestSol) {
+                            bestSol = sol;
+                        }
+                    }
+                    if (e > maxi) {
+                        maxi = e;
+                        bestSol = sol;
+                    }
                 }
             }
-            // Se e == maxi
-            if (changed == 1) {
-                sols.push_back(sol);
-                dp[i][j]= maxi;
-                ordem[i][j] = sol;
-            // Se e > maxi
-            } else if (changed == 2) {
-                sols.clear();
-                sols.push_back(sol);
-                dp[i][j]= maxi;
-                ordem[i][j] = sol;
-            }
+            dp[i][j] = maxi;
+            ordem[i][j] = bestSol;
         }
     }
-    sort(sols.begin(), sols.end());
-    return {dp[1][n], sols};
+    return {dp[1][n], ordem[1][n]};
 }
 
 int main(){
@@ -193,19 +182,18 @@ int main(){
     aminoacidos[i] = limiteF;
 
 
-    tuple<long long, vector<vector<int>>> result = eMax(aminoacidos);
+    tuple<long long, vector<int>> result = eMax(aminoacidos);
 
     cout<<get<0>(result)<<endl;
 
-    vector<vector<int>> v = std::get<1>(result);
-    vector<int> y = v[0];
+    vector<int> v = get<1>(result);
 
 
-    for (size_t i =0; i<y.size();i++) {
-        if (i != y.size() - 1) {
-            cout<< y[i] << " ";
+    for (size_t i =0; i<v.size();i++) {
+        if (i != v.size() - 1) {
+            cout<< v[i] << " ";
         }else {
-            cout<< y[i] << "\n";
+            cout<< v[i] << "\n";
         }
     }
     return 0;

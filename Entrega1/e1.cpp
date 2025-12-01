@@ -101,6 +101,7 @@ tuple<long long, vector<int>> eMax(vector<aA> chain){
         for(int j = 1; j<=n; j++){ // j<n
             if(i>j) continue;
             maxi = 0;
+            vector<int>bestSol;
             vector<int> sol;
             for(int k = i; k<=j; k++){
                 long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];

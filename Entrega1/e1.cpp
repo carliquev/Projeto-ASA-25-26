@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 //#include <fstream>
+#include <algorithm>
 #include <string>
 #include <tuple>
 using namespace std;
@@ -130,14 +131,9 @@ tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
                 dp[i][j]= maxi;
                 ordem[i][j] = sol;
             }
-
-
-
-
         }
-
     }
-
+    sort(sols.begin(), sols.end());
     return {dp[1][n], sols};
 }
 

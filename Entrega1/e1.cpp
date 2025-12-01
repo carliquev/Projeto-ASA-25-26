@@ -97,8 +97,8 @@ tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
 
     vector<vector<int>> sols;
 
-    for(int i= n; i>=1; i--){
-        for(int j = 1; j<=n; j++){
+    for(int i= n; i>=1; i--){ // i = n-1; i>=0
+        for(int j = 1; j<=n; j++){ // j<n
             if(i>j) continue;
             changed = 0;
             maxi = 0;

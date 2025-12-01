@@ -94,7 +94,6 @@ tuple<long long, vector<int>> eMax(vector<aA> chain){
     int n = chain.size()-2;
     vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0));
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
-    vector<int> bestSol;
 
     for(int i= n; i>=1; i--){
         for(int j = 1; j<=n; j++){

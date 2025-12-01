@@ -89,7 +89,7 @@ long long eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-tuple<long long, vector<int>> eMax(vector<aA> chain){
+tuple<long long, vector<int>> eMax(vector<aA> &chain){
     long long maxi;
     int n = chain.size()-2;
     vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0));
@@ -100,17 +100,13 @@ tuple<long long, vector<int>> eMax(vector<aA> chain){
             if(i>j) continue;
             maxi = -1;
             vector<int>bestSol;
-            vector<int> sol;
 
             for(int k = i; k<=j; k++){
                 long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    if (k-1 >= i) {
-                        sol = ordem[i][k-1];
-                    }
-                    if (k+1 <= j) {
-                        sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
-                    }
+                    vector<int> sol;
+                    sol = ordem[i][k-1];
+                    sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
                     sol.push_back(k);
 
                     if (e == maxi) {

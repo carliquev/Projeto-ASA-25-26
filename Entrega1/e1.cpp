@@ -102,17 +102,26 @@ tuple<long long, vector<int>> eMax(vector<aA> chain){
             maxi = -1;
             vector<int>bestSol;
             vector<int> sol;
+
             for(int k = i; k<=j; k++){
                 long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    sol = ordem[i][k-1];
-                    sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
+                    //verificar se ordem[i][k-1] não é vazio
+                    if (!ordem[i][k-1].empty()) {
+                        sol = ordem[i][k-1];
+                    }
+                    //verificar se ordem[k+1][j] não é vazio
+                    if (!ordem[k+1][j].empty()) {
+                        sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
+                    }
                     sol.push_back(k);
+
                     if (e == maxi) {
                         if (sol<bestSol) {
                             bestSol = sol;
                         }
                     }
+
                     if (e > maxi) {
                         maxi = e;
                         bestSol = sol;

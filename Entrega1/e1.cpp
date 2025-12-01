@@ -91,7 +91,7 @@ long long eLib(aA a, aA aEsq, aA aDir){
 
 tuple<long long, vector<vector<int>>> eMax(vector<aA> chain){
     int changed;
-    long long maxi=0;
+    long long maxi;
     int n = chain.size()-2;
     vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0)); //reduzir um destes (meter so n em vez de n+2 e ver se tamos ou nao a sair da matriz)
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>())); //reduzir um destes
@@ -149,8 +149,6 @@ int main(){
     string pesosAA;
     getline(cin, pesosAA);
     stringstream ss(pesosAA);
-
-
 
     vector<aA> aminoacidos(numAA + 2); // T inicial e final
     //Aminoacido T inicial
@@ -210,13 +208,5 @@ int main(){
             cout<< y[i] << "\n";
         }
     }
-
-
-
-
     return 0;
-
-
-
-
 }

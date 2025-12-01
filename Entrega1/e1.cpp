@@ -99,7 +99,7 @@ tuple<long long, vector<int>> eMax(vector<aA> &chain){
         for(int j = 1; j<=n; j++){
             if(i>j) continue;
             maxi = -1;
-            vector<int>bestSol;
+            vector<int> bestSol;
 
             for(int k = i; k<=j; k++){
                 long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
@@ -185,8 +185,8 @@ int main(){
 
 
     tuple<long long, vector<int>> result = eMax(aminoacidos);
-
-    cout<<get<0>(result)<<endl;
+    long long x = get<0>(result);
+    cout<<x<<endl;
 
     vector<int> v = get<1>(result);
 

@@ -43,3 +43,6 @@
 *.idea
 *.xml
 *.iml
+
+*.vscode
+*.json

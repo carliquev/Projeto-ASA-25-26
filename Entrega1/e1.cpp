@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-//#include <fstream>
 #include <algorithm>
 #include <string>
 #include <tuple>
@@ -133,11 +132,8 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
     return {dp[1][n], ordem[1][n]};
 }
 
-int main(){
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    //Ler input dos testes
-    //Primeira linha
+
+vector<aA> readinputUser(){
     int numAA;
 
     cin >> numAA; // Lê tamanho do aminoacido
@@ -186,9 +182,20 @@ int main(){
     limiteF.classe = T;
     limiteF.ePot =1;
     aminoacidos[i] = limiteF;
+    return aminoacidos;
+}
 
 
-    tuple<unsigned long long, vector<int>> result = eMax(aminoacidos);
+int main(){
+    //ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    //Ler input dos testes
+    //Primeira linha
+    
+    vector<aA> chain = readinputUser();
+
+    tuple<unsigned long long, vector<int>> result = eMax(chain);
     unsigned long long x = get<0>(result);
     cout<<x<<endl;
 

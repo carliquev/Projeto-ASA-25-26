@@ -94,14 +94,19 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
     int n = chain.size()-2;
     vector<vector<unsigned long long>> dp(n+2, vector<unsigned long long> (n+2, 0));
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
+    vector<int> sol;
+    vector<int> bestSol;
+
 
     for(int i= n; i>=1; i--){
         for(int j = 1; j<=n; j++){
             if(i>j) continue;
             maxi = 0;
             first = true;
-            vector<int> sol;
-            vector<int> bestSol;
+            //vector<int> sol;
+            //vector<int> bestSol;
+            sol.clear();
+            bestSol.clear();
 
             for(int k = i; k<=j; k++){
                 unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];

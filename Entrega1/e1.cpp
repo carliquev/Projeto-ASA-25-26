@@ -15,7 +15,7 @@ using namespace std;
 
 struct aA {
     int id;
-    int ePot;
+    unsigned long long ePot;
     int classe;
 };
 
@@ -156,7 +156,7 @@ int main(){
     getline(cin, classes);
 
     //vector<int> pesos;
-    int peso;
+    unsigned long long peso;
     int tipo=1;
     int i =1;
     for (char c : classes) {

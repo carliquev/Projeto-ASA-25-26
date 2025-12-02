@@ -20,7 +20,7 @@ struct aA {
 };
 
 //Calcula afinidade(classe1, classe2)
-long long af(int c1, int c2){
+unsigned long long af(int c1, int c2){
     if (c1 == T || c2 == T) {
         return 1;
     }
@@ -85,39 +85,40 @@ long long af(int c1, int c2){
 }
 
 //Calcula a energia libertada
-long long eLib(aA a, aA aEsq, aA aDir){
+unsigned long long eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
-tuple<long long, vector<int>> eMax(vector<aA> &chain){
-    long long maxi;
+tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
+    unsigned long long maxi;
+    bool first;
     int n = chain.size()-2;
-    vector<vector<long long>> dp(n+2, vector<long long> (n+2, 0));
+    vector<vector<unsigned long long>> dp(n+2, vector<unsigned long long> (n+2, 0));
     vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
 
     for(int i= n; i>=1; i--){
         for(int j = 1; j<=n; j++){
             if(i>j) continue;
-            maxi = -1;
+            maxi = 0;
+            first = true;
+            vector<int> sol;
             vector<int> bestSol;
 
             for(int k = i; k<=j; k++){
-                long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
+                unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    vector<int> sol;
                     sol = ordem[i][k-1];
                     sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
                     sol.push_back(k);
-
-                    if (e == maxi) {
+                    if (first || e > maxi) {
+                        if (first) first = false;
+                        maxi = e;
+                        bestSol = sol;
+                    }
+                    else if (e == maxi) {
                         if (sol<bestSol) {
                             bestSol = sol;
                         }
-                    }
-
-                    if (e > maxi) {
-                        maxi = e;
-                        bestSol = sol;
                     }
                 }
             }
@@ -184,8 +185,8 @@ int main(){
     aminoacidos[i] = limiteF;
 
 
-    tuple<long long, vector<int>> result = eMax(aminoacidos);
-    long long x = get<0>(result);
+    tuple<unsigned long long, vector<int>> result = eMax(aminoacidos);
+    unsigned long long x = get<0>(result);
     cout<<x<<endl;
 
     vector<int> v = get<1>(result);

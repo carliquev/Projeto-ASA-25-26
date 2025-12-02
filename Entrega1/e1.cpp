@@ -14,13 +14,12 @@ using namespace std;
 #define B 4
 
 struct aA {
-    int id;
     unsigned long long ePot;
     int classe;
 };
 
 //Calcula afinidade(classe1, classe2)
-unsigned long long af(int c1, int c2){
+int af(int c1, int c2){
     if (c1 == T || c2 == T) {
         return 1;
     }
@@ -147,7 +146,6 @@ int main(){
     aA limiteI;
     limiteI.classe = T;
     limiteI.ePot =1;
-    limiteI.id =0;
 
     aminoacidos[0] = limiteI;
 
@@ -173,7 +171,6 @@ int main(){
             default:
                 break;
         }
-        aminoacidos[i].id = i;
         aminoacidos[i].classe = tipo;
         aminoacidos[i].ePot = peso;
         i++;
@@ -181,7 +178,6 @@ int main(){
     aA limiteF;
     limiteF.classe = T;
     limiteF.ePot =1;
-    limiteF.id =i;
     aminoacidos[i] = limiteF;
 
 

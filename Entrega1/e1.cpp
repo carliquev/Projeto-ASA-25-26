@@ -87,14 +87,24 @@ unsigned long long eLib(aA a, aA aEsq, aA aDir){
     return (aEsq.ePot * af(aEsq.classe, a.classe) * a.ePot  +  a.ePot * af(a.classe, aDir.classe) * aDir.ePot);
 }
 
+void seq(int i, int j, vector<vector<int>> &optK, vector<int> &res) {
+    if (i>j) return;
+    int k = optK[i][j];
+    if (k==-1) return;
+    seq(i, k-1, optK, res);
+    seq(k+1, j, optK, res);
+    res.push_back(k);
+}
+
 tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
     unsigned long long maxi;
     bool first;
-    int n = chain.size()-2;
+    int bestK, n = chain.size()-2;
+    vector<int> bestSeq, seqTemp, res;
     vector<vector<unsigned long long>> dp(n+2, vector<unsigned long long> (n+2, 0));
-    vector<vector<vector<int>>> ordem(n+2, vector<vector<int>>(n+2, vector<int>()));
-    vector<int> sol;
-    vector<int> bestSol;
+    vector<vector<int>> optK(n+2, vector<int>(n+2, -1));
+    // vector<int> sol;
+    // vector<int> bestSol;
 
 
     for(int i= n; i>=1; i--){
@@ -104,32 +114,42 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
             first = true;
             //vector<int> sol;
             //vector<int> bestSol;
-            sol.clear();
-            bestSol.clear();
+            // sol.clear();
+            // bestSol.clear();
+            bestK = -1;
+            vector<int> bestSeq;
 
             for(int k = i; k<=j; k++){
                 unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    sol = ordem[i][k-1];
-                    sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
-                    sol.push_back(k);
+                    // sol = ordem[i][k-1];
+                    // sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
+                    // sol.push_back(k);
+                    vector<int> seqTemp;
+                    seq(i, k-1, optK, seqTemp);
+                    seq(k+1, j, optK, seqTemp);
+                    seqTemp.push_back(k);
+
                     if (first || e > maxi) {
                         if (first) first = false;
                         maxi = e;
-                        bestSol = sol;
+                        bestK = k;
+                        bestSeq = seqTemp;
                     }
                     else if (e == maxi) {
-                        if (sol<bestSol) {
-                            bestSol = sol;
+                        if (seqTemp<bestSeq) {
+                            bestK = k;
+                            bestSeq = seqTemp;
                         }
                     }
                 }
             }
             dp[i][j] = maxi;
-            ordem[i][j] = bestSol;
+            optK[i][j] = bestK;
         }
     }
-    return {dp[1][n], ordem[1][n]};
+    seq(1, n, optK, res);
+    return {dp[1][n], res};
 }
 
 
@@ -188,7 +208,7 @@ vector<aA> readinputUser(){
 
 int main(){
     //ios::sync_with_stdio(0);
-    cin.tie(0);
+    // cin.tie(0);
 
     //Ler input dos testes
     //Primeira linha

@@ -58,11 +58,9 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
             for(int k = i; k<=j; k++){
                 unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    if (first || e >= maxi) {
-                        if (first) first = false;
-                        maxi = e;
-                        bestK = k;
-                    }
+                    if (first) first = false;
+                    maxi = e;
+                    bestK = k;
                 }
             }
             dp[i][j] = maxi;

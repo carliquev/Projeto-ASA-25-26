@@ -35,7 +35,6 @@ unsigned long long eLib(aA a, aA aEsq, aA aDir){
 void seq(int i, int j, vector<vector<int>> &optK, vector<int> &res) {
     if (i>j) return;
     int k = optK[i][j];
-    if (k==-1) return;
     seq(i, k-1, optK, res);
     seq(k+1, j, optK, res);
     res.push_back(k);

@@ -40,10 +40,10 @@ void seq(int i, int j, vector<vector<int>> &optK, vector<int> &res) {
     res.push_back(k);
 }
 
-tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
+tuple<unsigned long long, vector<int>> eMax(vector<aA> &cadeia){
     unsigned long long maxi;
     bool first;
-    int bestK, n = chain.size()-2;
+    int bestK, n = cadeia.size()-2;
     vector<int> res;
     vector<vector<unsigned long long>> dp(n+2, vector<unsigned long long> (n+2, 0));
     vector<vector<int>> optK(n+2, vector<int>(n+2, -1));
@@ -56,7 +56,7 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
             bestK = -1;
 
             for(int k = i; k<=j; k++){
-                unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
+                unsigned long long e = eLib(cadeia[k], cadeia[i-1], cadeia[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
                     if (first) first = false;
                     maxi = e;
@@ -79,28 +79,28 @@ vector<aA> readinputUser(){
     cin.ignore();
 
     //Segunda linha
-    string pesosAA;
-    getline(cin, pesosAA);
-    stringstream ss(pesosAA);
+    string ePotAA;
+    getline(cin, ePotAA);
+    stringstream ss(ePotAA);
 
-    vector<aA> aminoacidos(numAA + 2); // T inicial e final
+    vector<aA> cadeia(numAA + 2); // T inicial e final
     //Aminoacido T inicial
     aA limiteI;
     limiteI.classe = T;
     limiteI.ePot =1;
 
-    aminoacidos[0] = limiteI;
+    cadeia[0] = limiteI;
 
     //Terceira linha
     string classes;
     getline(cin, classes);
 
     //vector<int> pesos;
-    unsigned long long peso;
+    unsigned long long ePot;
     int tipo=1;
     int i =1;
     for (char c : classes) {
-        ss>>peso;
+        ss>>ePot;
         switch (c) {
             case 'A':
                 tipo = A; break;
@@ -113,15 +113,15 @@ vector<aA> readinputUser(){
             default:
                 break;
         }
-        aminoacidos[i].classe = tipo;
-        aminoacidos[i].ePot = peso;
+        cadeia[i].classe = tipo;
+        cadeia[i].ePot = ePot;
         i++;
     }
     aA limiteF;
     limiteF.classe = T;
     limiteF.ePot =1;
-    aminoacidos[i] = limiteF;
-    return aminoacidos;
+    cadeia[i] = limiteF;
+    return cadeia;
 }
 
 
@@ -132,9 +132,9 @@ int main(){
     //Ler input dos testes
     //Primeira linha
     
-    vector<aA> chain = readinputUser();
+    vector<aA> cadeia = readinputUser();
 
-    tuple<unsigned long long, vector<int>> result = eMax(chain);
+    tuple<unsigned long long, vector<int>> result = eMax(cadeia);
     unsigned long long x = get<0>(result);
     cout<<x<<endl;
 

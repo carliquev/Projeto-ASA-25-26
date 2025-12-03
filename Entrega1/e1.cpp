@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <algorithm>
 #include <string>
 #include <tuple>
 using namespace std;
@@ -46,47 +45,24 @@ tuple<unsigned long long, vector<int>> eMax(vector<aA> &chain){
     unsigned long long maxi;
     bool first;
     int bestK, n = chain.size()-2;
-    vector<int> bestSeq, seqTemp, res;
+    vector<int> res;
     vector<vector<unsigned long long>> dp(n+2, vector<unsigned long long> (n+2, 0));
     vector<vector<int>> optK(n+2, vector<int>(n+2, -1));
-    // vector<int> sol;
-    // vector<int> bestSol;
-
 
     for(int i= n; i>=1; i--){
         for(int j = 1; j<=n; j++){
             if(i>j) continue;
             maxi = 0;
             first = true;
-            //vector<int> sol;
-            //vector<int> bestSol;
-            // sol.clear();
-            // bestSol.clear();
             bestK = -1;
-            vector<int> bestSeq;
 
             for(int k = i; k<=j; k++){
                 unsigned long long e = eLib(chain[k], chain[i-1], chain[j+1]) + dp[i][k-1] + dp[k+1][j];
                 if (e >= maxi) {
-                    // sol = ordem[i][k-1];
-                    // sol.insert(sol.end(), (ordem[k+1][j]).begin(), (ordem[k+1][j]).end());
-                    // sol.push_back(k);
-                    vector<int> seqTemp;
-                    seq(i, k-1, optK, seqTemp);
-                    seq(k+1, j, optK, seqTemp);
-                    seqTemp.push_back(k);
-
-                    if (first || e > maxi) {
+                    if (first || e >= maxi) {
                         if (first) first = false;
                         maxi = e;
                         bestK = k;
-                        bestSeq = seqTemp;
-                    }
-                    else if (e == maxi) {
-                        if (seqTemp<bestSeq) {
-                            bestK = k;
-                            bestSeq = seqTemp;
-                        }
                     }
                 }
             }

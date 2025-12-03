@@ -17,69 +17,15 @@ struct aA {
     int classe;
 };
 
-//Calcula afinidade(classe1, classe2)
-int af(int c1, int c2){
-    if (c1 == T || c2 == T) {
-        return 1;
-    }
-
-    if (c1 == P){
-        if (c2 == P){
-            return 1;
-        }
-        else if (c2 == N){
-            return 3;
-        }
-        else if (c2 == A){
-            return 1;
-        }
-        else if (c2 == B){
-            return 3;
-        }
-    }
-    else if (c1 == N){
-        if (c2 == P){
-            return 5;
-        }
-        else if (c2 == N){
-            return 1;
-        }
-        else if (c2 == A){
-            return 0;
-        }
-        else if (c2 == B){
-            return 1;
-        }
-    }
-    else if (c1 == A){
-        if (c2 == P){
-            return 0;
-        }
-        else if (c2 == N){
-            return 1;
-        }
-        else if (c2 == A){
-            return 0;
-        }
-        else if (c2 == B){
-            return 4;
-        }
-    }
-    else if (c1 == B){
-        if (c2 == P){
-            return 1;
-        }
-        else if (c2 == N){
-            return 3;
-        }
-        else if (c2 == A){
-            return 2;
-        }
-        else if (c2 == B){
-            return 3;
-        }
-    }
-    return -1;
+int af(int c1, int c2) {
+    int AF[5][5] = {
+        {1, 1, 1, 1, 1},
+        {1, 1, 3, 1, 3},
+        {1, 5, 1, 0, 1},
+        {1, 0, 1, 0, 4},
+        {1, 1, 3, 2, 3}
+    };
+    return AF[c1][c2];
 }
 
 //Calcula a energia libertada

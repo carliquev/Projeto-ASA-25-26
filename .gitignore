@@ -46,3 +46,5 @@
 
 *.vscode
 *.json
+
+*.py

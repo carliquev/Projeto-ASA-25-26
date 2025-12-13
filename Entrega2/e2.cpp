@@ -94,7 +94,7 @@ int main() {
 
     for (int i = 1; i< numCruzamentos+1; i++) {
         for (int j = 1; j<numCruzamentos+1; j++) {
-            if (i == j) continue;
+            if (i == j || dp[i][j] == 0) continue;
             int numCam = getNumCamiao(dp[i][j], numCamioes);
             if (!(numCam <m1 || numCam >m2)) {
                 rotCam[numCam].emplace_back(pair<int, int>(i, j));

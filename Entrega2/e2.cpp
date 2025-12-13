@@ -1,21 +1,54 @@
 #include <iostream>
+#include <queue>
 #include <vector>
 using namespace std;
 
-
-
-void topologicalOrder() {
-    //vai dar return do vetor de ordem topologica
+int getNumCamiao(int numCAB, int numCam) {
+    return 1 + numCAB%numCam;
 }
 
+vector<int> topologicalOrder(vector<vector<int>> adj) {
+    vector<int> list;
+    queue<int> q;
+    int n = adj.size() -1; //-1 pois criamos adj com size +1
+    vector<int> indegree(n+1, 0);
 
-void readInputUser(int& numCruz, int& numC, int& m1, int& m2, int& numLigCruz) {
+    for(int i =1; i< n; i++) {
+        for(int elem : adj[i]) {
+            indegree[elem]++;
+        }
+    }
+
+    for(int i =1; i< n; i++) {
+        if(indegree[i] == 0) {
+            q.push(i);
+        }
+    }
+
+    while (!q.empty()) {
+        int top = q.front();
+        q.pop();
+        for(int elem : adj[top]) {
+            indegree[elem]--;
+            if (indegree[elem] == 0) {
+                q.push(elem);
+            }
+        }
+        list.push_back(top);
+    }
+    //vai dar return do vetor de ordem topologica
+
+
+    return list;
+}
+
+vector<vector<int>> readInputUser(int& numCruz, int& numCam, int& m1, int& m2, int& numLigCruz) {
     //ler numLigCuzamentos linhas para obter os cruzamentos todos
     int A, B; //ponto A e B
 
-    cin >> numCruz >> numC >> m1 >> m2 >>numLigCruz; //ignora whitespaces
+    cin >> numCruz >> numCam >> m1 >> m2 >>numLigCruz; //ignora whitespaces
 
-    vector<vector<int>> adj(numCruz +2);
+    vector<vector<int>> adj(numCruz +1); //+1 para  elemento 1 estar no indice 1
 
 
     for(int i =0; i < numLigCruz; i++){
@@ -23,15 +56,7 @@ void readInputUser(int& numCruz, int& numC, int& m1, int& m2, int& numLigCruz) {
         //printf("%d %d\n", A, B);
         adj[A].push_back(B);
     }
-    
-     //debug
-
-
-
-
-
-
-//guardar também adjacentes
+    return adj;
 }
 
 int main() {
@@ -43,9 +68,15 @@ int main() {
     int m1, m2; //camioes para os quais calcular rotas, camiao m1 ate m2
     int numLigCruzamentos; // numero de ligacoes entre cruzamentos
 
+    vector<vector<int> > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
+    // printf("%d %d %d %d", numCruzamentos, numCamioes, m1 , m2);
+    vector<int>topOrder = topologicalOrder(adj);
+    // for (int num: topOrder) {
+    //     cout << num << " ";
+    // }
+
+    vector<vector<int>> dp (numCamioes+1, vector<int>(numCamioes+1, 0));
 
 
-    readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
-    printf("%d %d %d %d", numCruzamentos, numCamioes, m1 , m2);
     return 0;
 }

@@ -14,13 +14,13 @@ vector<int> topologicalOrder(vector<vector<int>> adj) {
     int n = adj.size() -1; //-1 pois criamos adj com size +1
     vector<int> indegree(n+1, 0);
 
-    for(int i =1; i< n; i++) {
+    for(int i =1; i<= n; i++) {
         for(int elem : adj[i]) {
             indegree[elem]++;
         }
     }
 
-    for(int i =1; i< n; i++) {
+    for(int i =1; i<= n; i++) {
         if(indegree[i] == 0) {
             q.push(i);
         }
@@ -29,13 +29,14 @@ vector<int> topologicalOrder(vector<vector<int>> adj) {
     while (!q.empty()) {
         int top = q.front();
         q.pop();
+        list.push_back(top);
         for(int elem : adj[top]) {
             indegree[elem]--;
             if (indegree[elem] == 0) {
                 q.push(elem);
             }
         }
-        list.push_back(top);
+        
     }
     //vai dar return do vetor de ordem topologica
 
@@ -72,9 +73,11 @@ int main() {
     vector<vector<int> > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
     // printf("%d %d %d %d", numCruzamentos, numCamioes, m1 , m2);
     vector<int> top = topologicalOrder(adj);
-    // for (int num: topOrder) {
+    // cout << "top: ";
+    // for (int num: top) {
     //     cout << num << " ";
     // }
+    // cout << "\n";
     vector<vector<int>> dp (numCruzamentos+1, vector<int>(numCruzamentos+1, 0));
     vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
 

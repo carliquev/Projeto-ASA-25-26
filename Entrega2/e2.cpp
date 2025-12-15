@@ -83,13 +83,15 @@ int main() {
 
     for (int i=numCruzamentos; i>0; i--) {
         for (int j = numCruzamentos; j>i; j--) {
-            for (int adjacente : adj[top[i]]) {
+            int u = top[i];
+            int v = top[j];
+            for (int adjacente : adj[u]) {
 
-                if (adjacente == top[j]) {
-                    dp[top[i]][top[j]] += 1;
+                if (adjacente == v) {
+                    dp[u][v] += 1;
 
                 } else {
-                    dp[top[i]][top[j]] += dp[adjacente][top[j]];
+                    dp[u][v] = (dp[u][v] + dp[adjacente][v])%numCamioes;
                 }
             }
         }

@@ -10,5 +10,6 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	@$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
 
+
 clean:
 	@rm -f $(TARGET)

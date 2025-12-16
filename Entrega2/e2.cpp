@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-int getNumCamiao(int numCamAB, int qtdCam) {
+int getNumCamiao(__uint128_t numCamAB, int qtdCam) {
     return 1 + numCamAB%qtdCam;
 }
 
@@ -11,7 +11,7 @@ vector<int> topologicalOrder(vector<vector<int>> adj) {
     vector<int> list;
     list.push_back(0);
     queue<int> q;
-    int n = adj.size() -1; //-1 pois criamos adj com size +1
+    int n = adj.size() -1; // -1 pois criamos adj com size +1
     vector<int> indegree(n+1, 0);
 
     for(int i =1; i<= n; i++) {
@@ -78,22 +78,23 @@ int main() {
     //     cout << num << " ";
     // }
     // cout << "\n";
-    vector<vector<int>> dp (numCruzamentos+1, vector<int>(numCruzamentos+1, 0));
+    vector<vector<__uint128_t>> dp (numCruzamentos+1, vector<__uint128_t>(numCruzamentos+1, 0));
     vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
 
     for (int i=numCruzamentos; i>0; i--) {
-        int u = top[i];
 
-        for (int adjacente : adj[u]) {
 
-            for (int j = i+1; j<numCruzamentos+1; j++) {
-                int v = top[j];
+        for (int j = numCruzamentos; j>i; j--) {
+            int u = top[i];
+            int v = top[j];
+
+            for (int adjacente : adj[u]) {
 
                 if (adjacente == v) {
-                    dp[u][v] = (dp[u][v]+1)%numCamioes;
+                    dp[u][v] += 1;
 
                 } else {
-                    dp[u][v] = (dp[u][v] + dp[adjacente][v])%numCamioes;
+                    dp[u][v] += dp[adjacente][v];
                 }
             }
         }
@@ -119,10 +120,10 @@ int main() {
 
     }
 
-    //
+
     // for (int i = 0; i< numCruzamentos+1; i++) {
     //     for (int j = 0; j<numCruzamentos+1; j++) {
-    //         cout << dp[i][j] << " ";
+    //         cout << (unsigned long long)dp[i][j] << " ";
     //     }
     //     cout << endl;
     // }

@@ -79,8 +79,8 @@ int main() {
     // }
     // cout << "\n";
     //vector<vector<__uint128_t>> dp (numCruzamentos+1, vector<__uint128_t>(numCruzamentos+1, 0));
-    vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
-
+    //vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
+    vector<vector<pair<int, int>>> rotCam (m2-m1 +1, vector<pair<int, int>>());
     // for (int i=numCruzamentos; i>0; i--) {
     //
     //
@@ -118,10 +118,12 @@ int main() {
         // for (int j=0; j<adj[i].size(); j++) {
         //     caminhosOrigemI[adj[i][j]] += 1;
         // }
-        for (unsigned long long j=i; j<= numCruzamentos; j++) {
+        for (unsigned long long j=1; j<= numCruzamentos; j++) {
             if (j!=i && caminhosOrigemI[top[j]]!=0) {
-                int numCam = getNumCamiao(caminhosOrigemI[top[j]], numCamioes);
-                rotCam[numCam].emplace_back(top[i], top[j]);
+                unsigned long long numCam = getNumCamiao(caminhosOrigemI[top[j]], numCamioes);
+                if (!(numCam <m1 || numCam >m2)) {
+                    rotCam[numCam-m1].emplace_back(top[i], top[j]);
+                }
             }
             for (int adjacente : adj[top[j]]) {
                 caminhosOrigemI[adjacente] += caminhosOrigemI[top[j]];
@@ -129,8 +131,9 @@ int main() {
         }
     }
 
-    for (unsigned long long i = m1; i<= m2; i++) {
-        printf("C%lld", i);
+    for (unsigned long long i = 0; i<= m2-m1; i++) {
+        unsigned long long numCam = m1 +i;
+        printf("C%lld", numCam);
         sort(rotCam[i].begin(), rotCam[i].end());
         for (pair<int, int> rot : rotCam[i]) {
             printf(" %d,%d", rot.first, rot.second);

@@ -82,13 +82,15 @@ int main() {
     vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
 
     for (int i=numCruzamentos; i>0; i--) {
-        for (int j = numCruzamentos; j>i; j--) {
-            int u = top[i];
-            int v = top[j];
-            for (int adjacente : adj[u]) {
+        int u = top[i];
+
+        for (int adjacente : adj[u]) {
+
+            for (int j = i+1; j<numCruzamentos+1; j++) {
+                int v = top[j];
 
                 if (adjacente == v) {
-                    dp[u][v] += 1;
+                    dp[u][v] = (dp[u][v]+1)%numCamioes;
 
                 } else {
                     dp[u][v] = (dp[u][v] + dp[adjacente][v])%numCamioes;
@@ -112,9 +114,9 @@ int main() {
         for (pair<int, int> rot : rotCam[i]) {
             printf(" %d,%d", rot.first, rot.second);
         }
-        if (i!=m2) {
-            printf("\n");
-        }
+
+        printf("\n");
+
     }
 
     //

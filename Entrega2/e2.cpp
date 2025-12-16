@@ -81,53 +81,52 @@ int main() {
     //vector<vector<__uint128_t>> dp (numCruzamentos+1, vector<__uint128_t>(numCruzamentos+1, 0));
     //vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
     vector<vector<pair<int, int>>> rotCam (m2-m1 +1, vector<pair<int, int>>());
-    // for (int i=numCruzamentos; i>0; i--) {
-    //
-    //
-    //     for (int j = numCruzamentos; j>i; j--) {
-    //         int u = top[i];
-    //         int v = top[j];
-    //
-    //         for (int adjacente : adj[u]) {
-    //
-    //             if (adjacente == v) {
-    //                 dp[u][v] += 1;
-    //
-    //             } else {
-    //                 dp[u][v] += dp[adjacente][v];
-    //             }
-    //         }
-    //     }
-    // }
-    //
-    //
-    //
-    // for (int i = 1; i< numCruzamentos+1; i++) {
-    //     for (int j = 1; j<numCruzamentos+1; j++) {
-    //         if (i == j || dp[i][j] == 0) continue;
-    //         int numCam = getNumCamiao(dp[i][j], numCamioes);
-    //         if (!(numCam <m1 || numCam >m2)) {
-    //             rotCam[numCam].emplace_back(pair<int, int>(i, j));
-    //         }
-    //     }
-    // }
+
+    vector<__uint128_t> caminhosOrigemI(numCruzamentos+1, 0);
+    vector<int> isValid(numCruzamentos+1, 0);
+    int stamp = 0;
+
+    auto getVal = [&](int v) -> __uint128_t {
+        return (isValid[v] == stamp) ? caminhosOrigemI[v] : 0;
+    };
+
+    auto addVal = [&](int v, __uint128_t x) {
+        if (isValid[v] != stamp) {
+            isValid[v] = stamp;
+            caminhosOrigemI[v] = x;
+        } else {
+            caminhosOrigemI[v] += x;
+        }
+    };
+
+
 
     for (unsigned long long i=1; i<= numCruzamentos; i++) {
-        vector<__uint128_t> caminhosOrigemI (numCruzamentos+1, 0);
+        //vector<__uint128_t> caminhosOrigemI (numCruzamentos+1, 0);
+        stamp++;
+        isValid[top[i]] = stamp;
         caminhosOrigemI[top[i]] = 1;
+        //caminhosOrigemI[top[i]] = 1;
         // for (int j=0; j<adj[i].size(); j++) {
         //     caminhosOrigemI[adj[i][j]] += 1;
         // }
         for (unsigned long long j=1; j<= numCruzamentos; j++) {
-            if (j!=i && caminhosOrigemI[top[j]]!=0) {
-                unsigned long long numCam = getNumCamiao(caminhosOrigemI[top[j]], numCamioes);
+            __uint128_t cur = getVal(top[j]);
+
+
+            if (j!=i && cur != 0) {
+                unsigned long long numCam = getNumCamiao(cur, numCamioes);
                 if (!(numCam <m1 || numCam >m2)) {
                     rotCam[numCam-m1].emplace_back(top[i], top[j]);
                 }
             }
+
+            if (cur == 0) continue;
+
             for (int adjacente : adj[top[j]]) {
-                caminhosOrigemI[adjacente] += caminhosOrigemI[top[j]];
+                addVal(adjacente, cur);
             }
+
         }
     }
 

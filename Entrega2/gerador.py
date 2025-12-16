@@ -36,9 +36,9 @@ def generate_input(
 # Example
 if __name__ == "__main__":
     generate_input(
-        num_vertices=5,
-        num_trucks=3,
+        num_vertices=100,
+        num_trucks=123456789,
         truck_min=1,
         truck_max=3,
-        num_edges=8
+        num_edges=1234 #kid named num
     )

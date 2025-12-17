@@ -4,34 +4,34 @@
 #include <vector>
 using namespace std;
 
-unsigned long long getNumCamiao(__uint128_t numCamAB, unsigned long long qtdCam) {
+unsigned  getNumCamiao(__uint64_t numCamAB, unsigned  qtdCam) {
     return 1 + numCamAB%qtdCam;
 }
 
-vector<unsigned long long> topologicalOrder(vector<vector<unsigned long long>> adj) {
-    vector<unsigned long long> list;
+vector<unsigned > topologicalOrder(vector<vector<unsigned >> adj) {
+    vector<unsigned > list;
     list.push_back(0);
-    queue<unsigned long long> q;
-    unsigned long long n = adj.size() -1; // -1 pois criamos adj com size +1
-    vector<unsigned long long> indegree(n+1, 0);
+    queue<unsigned > q;
+    unsigned  n = adj.size() -1; // -1 pois criamos adj com size +1
+    vector<unsigned > indegree(n+1, 0);
 
-    for(unsigned long long i =1; i<= n; i++) {
-        for(unsigned long long elem : adj[i]) {
+    for(unsigned  i =1; i<= n; i++) {
+        for(unsigned  elem : adj[i]) {
             indegree[elem]++;
         }
     }
 
-    for(unsigned long long i =1; i<= n; i++) {
+    for(unsigned  i =1; i<= n; i++) {
         if(indegree[i] == 0) {
             q.push(i);
         }
     }
 
     while (!q.empty()) {
-        unsigned long long top = q.front();
+        unsigned  top = q.front();
         q.pop();
         list.push_back(top);
-        for(unsigned long long elem : adj[top]) {
+        for(unsigned  elem : adj[top]) {
             indegree[elem]--;
             if (indegree[elem] == 0) {
                 q.push(elem);
@@ -45,16 +45,16 @@ vector<unsigned long long> topologicalOrder(vector<vector<unsigned long long>> a
     return list;
 }
 
-vector<vector<unsigned long long>> readInputUser(unsigned long long& numCruz, unsigned long long& numCam, unsigned long long& m1, unsigned long long& m2, unsigned long long& numLigCruz) {
+vector<vector<unsigned >> readInputUser(unsigned & numCruz, unsigned & numCam, unsigned & m1, unsigned & m2, unsigned & numLigCruz) {
     //ler numLigCuzamentos linhas para obter os cruzamentos todos
-    unsigned long long A, B; //ponto A e B
+    unsigned  A, B; //ponto A e B
 
     cin >> numCruz >> numCam >> m1 >> m2 >>numLigCruz; //ignora whitespaces
 
-    vector<vector<unsigned long long>> adj(numCruz +1); //+1 para  elemento 1 estar no indice 1
+    vector<vector<unsigned >> adj(numCruz +1); //+1 para  elemento 1 estar no indice 1
 
 
-    for(unsigned long long i =0; i < numLigCruz; i++){
+    for(unsigned  i =0; i < numLigCruz; i++){
         cin >> A >> B;
         //printf("%d %d\n", A, B);
         adj[A].push_back(B);
@@ -65,25 +65,25 @@ vector<vector<unsigned long long>> readInputUser(unsigned long long& numCruz, un
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
-    unsigned long long numCruzamentos; // ou seja temos o cruzmento 1 ate ao numCruzamentos
+    unsigned  numCruzamentos; // ou seja temos o cruzmento 1 ate ao numCruzamentos
     //queremos ter o vetor adj com tamanho numCruzamentos +2
-    unsigned long long numCamioes; //camiao C1 ate CnumCamioes
-    unsigned long long m1, m2; //camioes para os quais calcular rotas, camiao m1 ate m2
-    unsigned long long numLigCruzamentos; // numero de ligacoes entre cruzamentos
+    unsigned  numCamioes; //camiao C1 ate CnumCamioes
+    unsigned  m1, m2; //camioes para os quais calcular rotas, camiao m1 ate m2
+    unsigned  numLigCruzamentos; // numero de ligacoes entre cruzamentos
 
-    vector<vector<unsigned long long> > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
-    vector<unsigned long long> top = topologicalOrder(adj);
+    vector<vector<unsigned > > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
+    vector<unsigned > top = topologicalOrder(adj);
     vector<vector<pair<unsigned int, unsigned int>>> rotCam (m2-m1 +1, vector<pair<unsigned int, unsigned int>>());
 
-    vector<__uint128_t> caminhosOrigemI(numCruzamentos+1, 0);
-    vector<unsigned long long> isValid(numCruzamentos+1, 0);
-    unsigned long long stamp = 0;
+    vector<__uint64_t> caminhosOrigemI(numCruzamentos+1, 0);
+    vector<unsigned > isValid(numCruzamentos+1, 0);
+    unsigned  stamp = 0;
 
-    auto getVal = [&](unsigned long long v) -> __uint128_t {
+    auto getVal = [&](unsigned  v) -> __uint64_t {
         return (isValid[v] == stamp) ? caminhosOrigemI[v] : 0;
     };
 
-    auto addVal = [&](unsigned long long v, __uint128_t x) {
+    auto addVal = [&](unsigned  v, __uint64_t x) {
         if (isValid[v] != stamp) {
             isValid[v] = stamp;
             caminhosOrigemI[v] = x;
@@ -105,53 +105,53 @@ int main() {
         }
     };
 
-    // for (unsigned long long i=1; i<= numCruzamentos; i++) {
-    //     unsigned long long v = top[i];
+    // for (unsigned  i=1; i<= numCruzamentos; i++) {
+    //     unsigned  v = top[i];
     //     stamp++;
     //     isValid[v] = stamp;
     //     caminhosOrigemI[v] = 1;
 
-    //     for (unsigned long long j=1; j<= numCruzamentos; j++) {
-    //         unsigned long long u = top[j];
-    //         __uint128_t val = getVal(u);
+    //     for (unsigned  j=1; j<= numCruzamentos; j++) {
+    //         unsigned  u = top[j];
+    //         __uint64_t val = getVal(u);
 
     //         if (val == 0) continue;
 
     //         if (j!=i ) {
-    //             __uint128_t numCam = getNumCamiao(val, numCamioes);
+    //             __uint64_t numCam = getNumCamiao(val, numCamioes);
     //             if (!(numCam <m1 || numCam >m2)) {
     //                 rotCam[numCam-m1].emplace_back(v, u);
     //             }
     //         }
-    //         for (unsigned long long adjacente : adj[u]) {
+    //         for (unsigned  adjacente : adj[u]) {
     //             addVal(adjacente, val);
     //         }
 
     //     }
     // }
 
-    for (unsigned long long i=1; i<= numCruzamentos; i++) {
-        //unsigned long long v = top[i];
+    for (unsigned  i=1; i<= numCruzamentos; i++) {
+        //unsigned  v = top[i];
         stamp++;
         isValid[i] = stamp;
         caminhosOrigemI[i] = 1;
 
-        for (unsigned long long j=1; j<= numCruzamentos; j++) {
-            unsigned long long u = top[j];
-            __uint128_t val = getVal(u);
+        for (unsigned  j=1; j<= numCruzamentos; j++) {
+            unsigned  u = top[j];
+            __uint64_t val = getVal(u);
 
             if (val == 0) continue;
-            for (unsigned long long adjacente : adj[u]) {
+            for (unsigned  adjacente : adj[u]) {
                 addVal(adjacente, val);
             }
 
 
         }
-        for(unsigned long long k =1; k <= numCruzamentos; k++){
+        for(unsigned  k =1; k <= numCruzamentos; k++){
             if(k == i || isValid[k] !=stamp){
                 continue;
             }
-            __uint128_t numCam =caminhosOrigemI[k]; //= getNumCamiao(caminhosOrigemI[k], numCamioes);
+            __uint64_t numCam =caminhosOrigemI[k]; //= getNumCamiao(caminhosOrigemI[k], numCamioes);
             if(numCam == numCamioes){
                 numCam =1;
             }else{
@@ -165,9 +165,9 @@ int main() {
     }
 
 
-    for (unsigned long long i = 0; i <= m2-m1; i++) {
-        unsigned long long numCam = m1 + i;
-        printf("C%llu", numCam);
+    for (unsigned  i = 0; i <= m2-m1; i++) {
+        unsigned  numCam = m1 + i;
+        printf("C%u", numCam);
         //sort(rotCam[i].begin(), rotCam[i].end());
         for (auto &rot : rotCam[i]) {
             printf(" %u,%u", rot.first, rot.second);

@@ -91,12 +91,13 @@ int main() {
             caminhosOrigemI[v] += x;
 
             if (caminhosOrigemI[v] > numCamioes) {
-                if (caminhosOrigemI[v] < 2*numCamioes) {
-                    caminhosOrigemI[v] -= numCamioes;
-                }
-                else {
-                    caminhosOrigemI[v] = caminhosOrigemI[v]%numCamioes;
-                }
+                caminhosOrigemI[v] -= numCamioes;
+                // if (caminhosOrigemI[v] < 2*numCamioes) {
+                //     caminhosOrigemI[v] -= numCamioes;
+                // }
+                // else {
+                //     caminhosOrigemI[v] = caminhosOrigemI[v]%numCamioes;
+                // }
 
             }
 
@@ -104,34 +105,70 @@ int main() {
         }
     };
 
+    // for (unsigned long long i=1; i<= numCruzamentos; i++) {
+    //     unsigned long long v = top[i];
+    //     stamp++;
+    //     isValid[v] = stamp;
+    //     caminhosOrigemI[v] = 1;
+
+    //     for (unsigned long long j=1; j<= numCruzamentos; j++) {
+    //         unsigned long long u = top[j];
+    //         __uint128_t val = getVal(u);
+
+    //         if (val == 0) continue;
+
+    //         if (j!=i ) {
+    //             __uint128_t numCam = getNumCamiao(val, numCamioes);
+    //             if (!(numCam <m1 || numCam >m2)) {
+    //                 rotCam[numCam-m1].emplace_back(v, u);
+    //             }
+    //         }
+    //         for (unsigned long long adjacente : adj[u]) {
+    //             addVal(adjacente, val);
+    //         }
+
+    //     }
+    // }
+
     for (unsigned long long i=1; i<= numCruzamentos; i++) {
+        //unsigned long long v = top[i];
         stamp++;
-        isValid[top[i]] = stamp;
-        caminhosOrigemI[top[i]] = 1;
+        isValid[i] = stamp;
+        caminhosOrigemI[i] = 1;
 
         for (unsigned long long j=1; j<= numCruzamentos; j++) {
-            __uint128_t val = getVal(top[j]);
+            unsigned long long u = top[j];
+            __uint128_t val = getVal(u);
 
             if (val == 0) continue;
-
-            if (j!=i ) {
-                __uint128_t numCam = getNumCamiao(val, numCamioes);
-                if (!(numCam <m1 || numCam >m2)) {
-                    rotCam[numCam-m1].emplace_back(top[i], top[j]);
-                }
-            }
-            for (unsigned long long adjacente : adj[top[j]]) {
+            for (unsigned long long adjacente : adj[u]) {
                 addVal(adjacente, val);
             }
 
+
         }
+        for(unsigned long long k =1; k <= numCruzamentos; k++){
+            if(k == i || isValid[k] !=stamp){
+                continue;
+            }
+            __uint128_t numCam =caminhosOrigemI[k]; //= getNumCamiao(caminhosOrigemI[k], numCamioes);
+            if(numCam == numCamioes){
+                numCam =1;
+            }else{
+                numCam++;
+            }
+            if (!(numCam <m1 || numCam >m2)) {
+                rotCam[numCam-m1].emplace_back(i, k);
+            }
+        }
+        
     }
 
 
     for (unsigned long long i = 0; i <= m2-m1; i++) {
         unsigned long long numCam = m1 + i;
         printf("C%llu", numCam);
-        sort(rotCam[i].begin(), rotCam[i].end());
+        //sort(rotCam[i].begin(), rotCam[i].end());
         for (auto &rot : rotCam[i]) {
             printf(" %u,%u", rot.first, rot.second);
         }

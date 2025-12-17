@@ -73,83 +73,45 @@ int main() {
 
     vector<vector<unsigned long long> > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
     vector<unsigned long long> top = topologicalOrder(adj);
-    // cout << "top: ";
-    // for (int num: top) {
-    //     cout << num << " ";
-    // }
-    // cout << "\n";
-    //vector<vector<__uint128_t>> dp (numCruzamentos+1, vector<__uint128_t>(numCruzamentos+1, 0));
-    //vector<vector<pair<int, int>>> rotCam (numCamioes+1, vector<pair<int, int>>());
-    vector<vector<pair<int, int>>> rotCam (m2-m1 +1, vector<pair<int, int>>());
 
-    vector<__uint128_t> caminhosOrigemI(numCruzamentos+1, 0);
-    vector<int> isValid(numCruzamentos+1, 0);
-    int stamp = 0;
+    vector<vector<pair<unsigned long long, unsigned long long>>> rotCam (m2-m1 +1);
 
-    auto getVal = [&](int v) -> __uint128_t {
-        return (isValid[v] == stamp) ? caminhosOrigemI[v] : 0;
-    };
+    for (unsigned long long origem = 1; origem <= numCruzamentos; ++origem) {
 
-    auto addVal = [&](int v, __uint128_t x) {
-        if (isValid[v] != stamp) {
-            isValid[v] = stamp;
-            caminhosOrigemI[v] = x;
-        } else {
-            caminhosOrigemI[v] += x;
-        }
-    };
+        vector<__uint128_t> caminhos(numCruzamentos + 1, 0);
+        caminhos[origem] = 1;
 
-
-
-    for (unsigned long long i=1; i<= numCruzamentos; i++) {
-        //vector<__uint128_t> caminhosOrigemI (numCruzamentos+1, 0);
-        stamp++;
-        isValid[top[i]] = stamp;
-        caminhosOrigemI[top[i]] = 1;
-        //caminhosOrigemI[top[i]] = 1;
-        // for (int j=0; j<adj[i].size(); j++) {
-        //     caminhosOrigemI[adj[i][j]] += 1;
-        // }
-        for (unsigned long long j=1; j<= numCruzamentos; j++) {
-            __uint128_t cur = getVal(top[j]);
-
-
-            if (j!=i && cur != 0) {
-                unsigned long long numCam = getNumCamiao(cur, numCamioes);
-                if (!(numCam <m1 || numCam >m2)) {
-                    rotCam[numCam-m1].emplace_back(top[i], top[j]);
+        // percorre SEMPRE a topológica completa
+        for (unsigned long long k = 1; k <= numCruzamentos; ++k) {
+            unsigned long long v = top[k];
+    
+            if (caminhos[v] == 0) continue;
+    
+            // Decide o camião para (origem, v)
+            if (v != origem) {
+                unsigned long long cam = getNumCamiao(caminhos[v], numCamioes);
+                if (cam >= m1 && cam <= m2) {
+                    rotCam[cam - m1].emplace_back(origem, v);
                 }
             }
-
-            if (cur == 0) continue;
-
-            for (int adjacente : adj[top[j]]) {
-                addVal(adjacente, cur);
+    
+            // Relaxação (contagem de caminhos): propaga para sucessores
+            for (unsigned long long nxt : adj[v]) {
+                caminhos[nxt] += caminhos[v];
             }
-
         }
     }
 
-    for (unsigned long long i = 0; i<= m2-m1; i++) {
-        unsigned long long numCam = m1 +i;
-        printf("C%lld", numCam);
+
+    for (unsigned long long i = 0; i < m2 - m1 + 1; ++i) {
+        unsigned long long cam = m1 + i;
+        printf("C%llu", cam);
         sort(rotCam[i].begin(), rotCam[i].end());
-        for (pair<int, int> rot : rotCam[i]) {
-            printf(" %d,%d", rot.first, rot.second);
+        for (auto &p : rotCam[i]) {
+            printf(" %llu,%llu", p.first, p.second);
         }
-
         printf("\n");
-
     }
-
-
-    // for (int i = 0; i< numCruzamentos+1; i++) {
-    //     for (int j = 0; j<numCruzamentos+1; j++) {
-    //         cout << (unsigned long long)dp[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-
+    
     return 0;
 }

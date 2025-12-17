@@ -75,6 +75,7 @@ int main() {
     vector<unsigned long long> top = topologicalOrder(adj);
 
     vector<vector<pair<unsigned long long, unsigned long long>>> rotCam (m2-m1 +1);
+    unsigned long long valAtual;
 
     for (unsigned long long origem = 1; origem <= numCruzamentos; ++origem) {
 
@@ -87,18 +88,36 @@ int main() {
     
             if (caminhos[v] == 0) continue;
     
-            // Decide o camião para (origem, v)
-            if (v != origem) {
-                unsigned long long cam = getNumCamiao(caminhos[v], numCamioes);
-                if (cam >= m1 && cam <= m2) {
-                    rotCam[cam - m1].emplace_back(origem, v);
-                }
-            }
-    
+            // // Decide o camião para (origem, v)
+            // if (v != origem) {
+            //     unsigned long long cam = getNumCamiao(caminhos[v], numCamioes);
+            //     if (cam >= m1 && cam <= m2) {
+            //         rotCam[cam - m1].emplace_back(origem, v);
+            //     }
+            // }
+
             // Relaxação (contagem de caminhos): propaga para sucessores
-            for (unsigned long long nxt : adj[v]) {
-                caminhos[nxt] += caminhos[v];
+            for (unsigned long long adjacente : adj[v]) {
+                valAtual = caminhos[v];
+                if (valAtual > numCamioes) {
+                    if (valAtual < 2*numCamioes) {
+                        valAtual -= numCamioes;
+                    } else if (valAtual % numCamioes != 0) {
+                        valAtual %=numCamioes;
+                    }
+                }
+                caminhos[adjacente] +=valAtual;
             }
+
+        }
+        for (unsigned long long destino = 1; destino <= numCruzamentos; ++destino) {
+            if (destino == origem) continue;
+            if (caminhos[destino] == 0) continue;
+
+            unsigned long long cam = getNumCamiao(caminhos[destino], numCamioes);
+            if (cam < m1 || cam > m2) continue;
+
+            rotCam[cam - m1].emplace_back(origem, destino);
         }
     }
 
@@ -106,7 +125,6 @@ int main() {
     for (unsigned long long i = 0; i < m2 - m1 + 1; ++i) {
         unsigned long long cam = m1 + i;
         printf("C%llu", cam);
-        sort(rotCam[i].begin(), rotCam[i].end());
         for (auto &p : rotCam[i]) {
             printf(" %llu,%llu", p.first, p.second);
         }

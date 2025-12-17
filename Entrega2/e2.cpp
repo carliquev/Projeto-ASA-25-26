@@ -88,7 +88,7 @@ int main() {
             caminhosOrigemI[v] += x;
 
             if (caminhosOrigemI[v] > numCamioes) {
-                // mais ráido do que fazer %
+                // mais rápido do que fazer %
                 caminhosOrigemI[v] -= numCamioes;
 
             }

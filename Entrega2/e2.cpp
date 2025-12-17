@@ -40,8 +40,6 @@ vector<unsigned > topologicalOrder(vector<vector<unsigned >> adj) {
         
     }
     //vai dar return do vetor de ordem topologica
-
-
     return list;
 }
 
@@ -56,7 +54,6 @@ vector<vector<unsigned >> readInputUser(unsigned & numCruz, unsigned & numCam, u
 
     for(unsigned  i =0; i < numLigCruz; i++){
         cin >> A >> B;
-        //printf("%d %d\n", A, B);
         adj[A].push_back(B);
     }
     return adj;
@@ -73,7 +70,7 @@ int main() {
 
     vector<vector<unsigned > > adj = readInputUser(numCruzamentos, numCamioes, m1, m2, numLigCruzamentos);
     vector<unsigned > top = topologicalOrder(adj);
-    vector<vector<pair<unsigned int, unsigned int>>> rotCam (m2-m1 +1, vector<pair<unsigned int, unsigned int>>());
+    vector<vector<pair<unsigned, unsigned>>> rotCam (m2-m1 +1, vector<pair<unsigned, unsigned>>());
 
     vector<__uint64_t> caminhosOrigemI(numCruzamentos+1, 0);
     vector<unsigned > isValid(numCruzamentos+1, 0);
@@ -91,47 +88,14 @@ int main() {
             caminhosOrigemI[v] += x;
 
             if (caminhosOrigemI[v] > numCamioes) {
+                // mais ráido do que fazer %
                 caminhosOrigemI[v] -= numCamioes;
-                // if (caminhosOrigemI[v] < 2*numCamioes) {
-                //     caminhosOrigemI[v] -= numCamioes;
-                // }
-                // else {
-                //     caminhosOrigemI[v] = caminhosOrigemI[v]%numCamioes;
-                // }
 
             }
-
-
         }
     };
 
-    // for (unsigned  i=1; i<= numCruzamentos; i++) {
-    //     unsigned  v = top[i];
-    //     stamp++;
-    //     isValid[v] = stamp;
-    //     caminhosOrigemI[v] = 1;
-
-    //     for (unsigned  j=1; j<= numCruzamentos; j++) {
-    //         unsigned  u = top[j];
-    //         __uint64_t val = getVal(u);
-
-    //         if (val == 0) continue;
-
-    //         if (j!=i ) {
-    //             __uint64_t numCam = getNumCamiao(val, numCamioes);
-    //             if (!(numCam <m1 || numCam >m2)) {
-    //                 rotCam[numCam-m1].emplace_back(v, u);
-    //             }
-    //         }
-    //         for (unsigned  adjacente : adj[u]) {
-    //             addVal(adjacente, val);
-    //         }
-
-    //     }
-    // }
-
     for (unsigned  i=1; i<= numCruzamentos; i++) {
-        //unsigned  v = top[i];
         stamp++;
         isValid[i] = stamp;
         caminhosOrigemI[i] = 1;
@@ -144,9 +108,8 @@ int main() {
             for (unsigned  adjacente : adj[u]) {
                 addVal(adjacente, val);
             }
-
-
         }
+
         for(unsigned  k =1; k <= numCruzamentos; k++){
             if(k == i || isValid[k] !=stamp){
                 continue;
@@ -161,20 +124,16 @@ int main() {
                 rotCam[numCam-m1].emplace_back(i, k);
             }
         }
-        
     }
-
 
     for (unsigned  i = 0; i <= m2-m1; i++) {
         unsigned  numCam = m1 + i;
         printf("C%u", numCam);
-        //sort(rotCam[i].begin(), rotCam[i].end());
         for (auto &rot : rotCam[i]) {
             printf(" %u,%u", rot.first, rot.second);
         }
         printf("\n");
     }
-
 
     return 0;
 }

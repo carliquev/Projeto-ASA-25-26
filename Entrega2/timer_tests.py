@@ -16,19 +16,18 @@ PROJECT_EXE = "./project" if os.name != 'nt' else "project.exe"
 TEST_CASES = [
     (100, 1000, 50),
     (250, 1000, 50),
-    (300, 1000, 50),
     (500, 1000, 50),
     (700, 1000, 50),
-    (750, 1000, 50),
-    (1000, 500, 50),
-    (1250, 600, 50),
-    (1500, 750, 50),
+    (850, 1000, 50),
+    (1000, 1000, 50),
+    (1250, 1000, 50),
+    (1500, 1000, 50),
     (2000, 1000, 50),
 ]
 
 RUNS_PER_CASE = 5
 COMPILER = "g++"
-FLAGS = ["-O3 -Wall", "-std=c++11"]
+FLAGS = ["-O3", "-std=c++11"]
 # -----------------------------------------------------------------------------
 
 def compile_cpp(source, output):
@@ -47,14 +46,37 @@ def compile_cpp(source, output):
             sys.exit(1)
 
 def run_test_case(n, m, d):
-    """Returns (average_time, standard_deviation)."""
+    """Returns (average_time, standard_deviation, k_value)."""
+    
     # 1. Generate Input
+    # We use a random seed, but we capture the specific K generated
     gen_cmd = [GENERATOR_EXE, str(n), str(m), str(d), str(random.randint(0, 42))]
     try:
         gen_process = subprocess.run(gen_cmd, capture_output=True, text=True, check=True)
         input_data = gen_process.stdout
     except subprocess.CalledProcessError:
-        return None, None
+        return None, None, None
+
+    # --- NEW: Extract K (Edges) from Input Data ---
+    # Based on your generator code:
+    # Line 1: N
+    # Line 2: M
+    # Line 3: m1 m2
+    # Line 4: K (edges size)
+    try:
+        lines = input_data.strip().split()
+        # The 4th integer in the output stream is K (indices 0, 1, 2, 3...)
+        # However, checking line-based structure is safer if your generator strictly uses endl
+        lines_text = input_data.strip().split('\n')
+        if len(lines_text) >= 4:
+            k_val = int(lines_text[3].strip())
+        else:
+            # Fallback parsing if newlines aren't perfect
+            k_val = int(lines[4]) 
+    except (ValueError, IndexError):
+        print(f"Warning: Could not parse K from generator output. using 0.")
+        k_val = 0
+    # --------------------------------------------------
 
     # 2. Benchmark Project Multiple Times
     durations = []
@@ -70,59 +92,59 @@ def run_test_case(n, m, d):
                 check=True
             )
         except subprocess.CalledProcessError:
-            return None, None
+            return None, None, None
         durations.append(time.perf_counter() - start)
 
     # 3. Calculate Stats
     avg_time = statistics.mean(durations)
-    # If we only run once, stdev is 0
     stdev_time = statistics.stdev(durations) if len(durations) > 1 else 0.0
     
-    return avg_time, stdev_time
+    return avg_time, stdev_time, k_val
 
 def plot_results(x_vals, y_vals, y_errs):
-    """Generates a plot with error bars."""
     plt.figure(figsize=(10, 6))
     
-    # 'yerr' adds the margin of error bars
-    # 'capsize' adds the little horizontal lines at the top/bottom of the error bars
     plt.errorbar(x_vals, y_vals, yerr=y_errs, fmt='o-', color='b', 
-                 ecolor='red', capsize=5, label='Tempo medido ± margem de erro')
+                 ecolor='red', capsize=5, label='Tempo medido ± StDev')
     
-    plt.title('Performance Analysis: Time vs N(N+M)')
-    plt.xlabel('Complexity Factor: N * (N + M)')
+    # Updated Label to reflect N * (N + K)
+    plt.title(r'Performance Analysis: Time vs $N(N+K)$')
+    plt.xlabel(r'Complexity Factor: $N \times (N + K)$')
     plt.ylabel('Execution Time (seconds)')
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.legend()
     
-    output_file = "benchmark_plot_with_error.png"
+    output_file = "benchmark_plot_NK.png"
     plt.savefig(output_file)
     print(f"\nGraph saved to {output_file}")
-    plt.show()
+    # plt.show() # Commented out in case you are on a server without display
 
 def main():
     compile_cpp(GENERATOR_SOURCE, GENERATOR_EXE)
     compile_cpp(PROJECT_SOURCE, PROJECT_EXE)
 
-    x_data = []      # N * (N + M)
+    x_data = []      # N * (N + K)
     y_data = []      # Average Time
     y_err_data = []  # Standard Deviation
 
-    print(f"\n{'N':<8} {'M':<8} {'N*(N+M)':<15} | {'Avg Time (s)':<15} | {'StDev (s)':<15}")
-    print("-" * 75)
+    print(f"\n{'N':<6} {'M':<6} {'K (Edges)':<10} {'N*(N+K)':<15} | {'Avg Time':<12} | {'StDev':<12}")
+    print("-" * 80)
 
     for n, m, d in TEST_CASES:
-        avg, stdev = run_test_case(n, m, d)
+        avg, stdev, k = run_test_case(n, m, d)
         
         if avg is not None:
-            metric = n * (n + m)
+            # --- NEW METRIC CALCULATION ---
+            metric = n * (n + k)
+            # ------------------------------
+            
             x_data.append(metric)
             y_data.append(avg)
             y_err_data.append(stdev)
             
-            print(f"{n:<8} {m:<8} {metric:<15} | {avg:.6f}          | {stdev:.6f}")
+            print(f"{n:<6} {m:<6} {k:<10} {metric:<15} | {avg:.6f}     | {stdev:.6f}")
         else:
-            print(f"{n:<8} {m:<8} {'-':<15} | FAILED")
+            print(f"{n:<6} {m:<6} {'-':<10} {'-':<15} | FAILED")
 
     if x_data:
         plot_results(x_data, y_data, y_err_data)

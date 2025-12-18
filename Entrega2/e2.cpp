@@ -4,10 +4,6 @@
 #include <vector>
 using namespace std;
 
-unsigned  getNumCamiao(__uint64_t numCamAB, unsigned  qtdCam) {
-    return 1 + numCamAB%qtdCam;
-}
-
 vector<unsigned > topologicalOrder(vector<vector<unsigned >> adj) {
     vector<unsigned > list;
     list.push_back(0);

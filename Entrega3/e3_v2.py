@@ -1,16 +1,22 @@
 import sys
 from pulp import *
 
-def solve():
-    # 1. Leitura Robusta do Input
-    input_data = sys.stdin.read().split()
-    if not input_data:
-        return
+# Helper to read input token by token without waiting for EOF on the whole file
+def input_generator():
+    for line in sys.stdin:
+        for token in line.split():
+            yield token
 
-    iterator = iter(input_data)
+def solve():
+    # 1. Leitura Robusta do Input (Iterativa)
+    iterator = input_generator()
+    
     try:
-        n = int(next(iterator)) # Número de equipas
-        m = int(next(iterator)) # Jogos já realizados
+        # Pega n (equipas) e m (jogos realizados) [cite: 19]
+        n_str = next(iterator)
+        m_str = next(iterator)
+        n = int(n_str)
+        m = int(m_str)
     except StopIteration:
         return
 
@@ -19,13 +25,13 @@ def solve():
     current_points = {i: 0 for i in range(1, n + 1)}
     
     # Matriz para contar jogos realizados entre par (u, v)
-    # Usamos chaves ordenadas (menor, maior) para evitar duplicatas (1,2) e (2,1)
+    # As chaves são tuplos ordenados (menor, maior)
     games_played_count = {}
     for i in range(1, n + 1):
         for j in range(i + 1, n + 1):
             games_played_count[(i, j)] = 0
 
-    # 3. Processar os 'm' jogos já realizados
+    # 3. Processar os 'm' jogos já realizados [cite: 20]
     for _ in range(m):
         try:
             u = int(next(iterator))
@@ -43,7 +49,7 @@ def solve():
         if pair in games_played_count:
             games_played_count[pair] += 1
 
-        # Atribuir Pontos
+        # Atribuir Pontos: 3 vitoria, 1 empate, 0 derrota 
         if w == 0:  # Empate
             current_points[u] += 1
             current_points[v] += 1
@@ -53,14 +59,14 @@ def solve():
             current_points[v] += 3
 
     # 4. Identificar Jogos Restantes
-    # Assume campeonato a duas voltas (2 jogos entre cada par)
+    # Campeonato com duas voltas simétricas [cite: 10]
     remaining_games = []
     for (i, j), count in games_played_count.items():
         rem = 2 - count
         if rem > 0:
             remaining_games.append((i, j, rem))
 
-    # 5. Resolver PL para cada equipa
+    # 5. Resolver PL para cada equipa [cite: 13]
     for target_team in range(1, n + 1):
         # Criar o Problema de Minimização
         prob = LpProblem(f"Team_{target_team}_Analysis", LpMinimize)
@@ -85,7 +91,7 @@ def solve():
             # Restrição: A soma dos resultados deve ser igual aos jogos restantes
             prob += (w_i + d + w_j == rem)
 
-            # Se este jogo envolve a equipa alvo, guardamos a variável de vitória para minimizar
+            # Se este jogo envolve a equipa alvo, guardamos a variável de vitória para minimizar 
             if i == target_team:
                 target_wins_vars.append(w_i)
             elif j == target_team:
@@ -98,13 +104,12 @@ def solve():
             final_points_expr[j] += 3 * w_j + d
 
         # --- Função Objetivo ---
-        # Minimizar o número de vitórias FUTURAS da equipa alvo
+        # Minimizar o número de vitórias FUTURAS da equipa alvo 
         prob += lpSum(target_wins_vars)
 
         # --- Restrições do Campeonato ---
-        # A equipa alvo deve ter pontos >= a todas as outras equipas
-        # (Isso assume que 'vitória' no campeonato aceita empate de pontos. 
-        # Se for necessário desempate estrito, usar >= + epsilon ou lógica extra)
+        # A equipa alvo deve ter pontos >= a todas as outras equipas.
+        # "admitindo que os critérios de desempate são favoráveis"  -> basta ser >=
         for opponent in range(1, n + 1):
             if opponent != target_team:
                 prob += (final_points_expr[target_team] >= final_points_expr[opponent])
@@ -114,11 +119,10 @@ def solve():
         status = prob.solve(PULP_CBC_CMD(msg=0))
 
         # --- Output ---
+        # Se impossível, retornar -1 
         if status == LpStatusOptimal:
-            # Imprime o valor da função objetivo (mínimo de vitórias necessárias)
             print(int(value(prob.objective)))
         else:
-            # Impossível ganhar
             print("-1")
 
 if __name__ == "__main__":

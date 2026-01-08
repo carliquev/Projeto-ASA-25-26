@@ -12,9 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # SEED FIXA PARA REPRODUTIBILIDADE
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
+# SEED = 2
+# random.seed(SEED)
+# np.random.seed(SEED)
 
 def gerar_instancia(n, m_jogos_realizados):
     """
@@ -80,7 +80,7 @@ def main():
     print("=" * 90)
     print(f"Solver: {SOLVER_FILE}")
     print(f"Execuções por instância: 3")
-    print(f"Seed: {SEED} (resultados reprodutíveis)")
+    #print(f"Seed: {SEED} (resultados reprodutíveis)")
     print("=" * 90)
 
     # Definir as 11 instâncias com tamanhos incrementais
@@ -95,7 +95,7 @@ def main():
         (10, 40),
         (11, 50),
         (12, 60),
-        (13, 72),
+        (13, 80),
     ]
 
     resultados = []
@@ -173,7 +173,7 @@ def main():
 
     # Gráfico principal
     plt.plot(complexidades, tempos_medios, 'o-', linewidth=2, markersize=8, 
-             color='#2E86AB', label='Tempo de Execução')
+             color='#2E86AB')#, label='Tempo de Execução')
 
     # Adicionar barras de erro (desvio padrão)
     desvios = [r['tempo_std'] for r in resultados]
@@ -182,7 +182,7 @@ def main():
 
     plt.xlabel('n × (m + n)', fontsize=13, fontweight='bold')
     plt.ylabel('Tempo de Execução (segundos)', fontsize=13, fontweight='bold')
-    plt.title('Complexidade Temporal do Programa - Campeonato de Futebol', 
+    plt.title('Complexidade Temporal', 
               fontsize=15, fontweight='bold', pad=20)
     plt.grid(True, alpha=0.3, linestyle='--')
     plt.legend(fontsize=11)

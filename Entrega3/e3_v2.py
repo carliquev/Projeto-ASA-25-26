@@ -20,8 +20,6 @@ def solve():
             if i != j:
                 if i<j:
                     games_left[(i, j)] = 2
-                else:
-                    games_left[(j, i)] = 2
 
 
 
@@ -43,80 +41,60 @@ def solve():
         else:
             games_left[(adversario, equipa_atual)] -= 1
     
+    max_pontos = int(max(pontos.values()))
 
     for alvo in range(1, n_equipas + 1):
+        if(pontos[alvo] + 3*sum([games_left[(min(alvo, j), max(alvo, j))] for j in range(1, n_equipas + 1) if j != alvo]) < max_pontos):
+            print("-1")
+            continue
 
-        # Cria o problema de minimização
         prob = pulp.LpProblem("Minimizar_Vitorias", pulp.LpMinimize)
 
-        vars_jogos = {} # Para guardar referências às variáveis do PuLP
+        pontos_finais = pontos.copy()
 
+        i_wins= {}
+        i_draws= {}
         for (i, j), qtd in games_left.items():
-            if qtd > 0:
-                # x_i_j: número de vezes que i ganha a j
-                x_i_j = pulp.LpVariable(f"win_{i}_{j}", lowBound=0, upBound=qtd, cat=pulp.LpInteger)
-                
-                # x_j_i: número de vezes que j ganha a i
-                x_j_i = pulp.LpVariable(f"win_{j}_{i}", lowBound=0, upBound=qtd, cat=pulp.LpInteger)
-                
-                # y_i_j: número de empates entre i e j
-                y_i_j = pulp.LpVariable(f"draw_{i}_{j}", lowBound=0, upBound=qtd, cat=pulp.LpInteger)
-                
-                vars_jogos[(i, j)] = (x_i_j, x_j_i, y_i_j)
-                
-                # RESTRIÇÃO 1: Soma dos resultados deve ser igual aos jogos restantes
-                # x_i_j + x_j_i + y_i_j == qtd
-                prob += (x_i_j + x_j_i + y_i_j == qtd), f"Jogos_Restantes_{i}_{j}"
+            for k in range(0, qtd):
 
-        pontos_finais = {}
-
-        for t in range(1, n_equipas + 1):
-            # Começa com os pontos já conquistados
-            expressao_pontos = pontos[t]
+                i_wins[(i, j, k)] = pulp.LpVariable(f"win_{i}_{j}_{k}", cat=pulp.LpBinary)
+                
+                i_draws[(i, j, k)] = pulp.LpVariable(f"draw_{i}_{j}_{k}", cat=pulp.LpBinary)
+                
+                prob += (i_wins[(i, j, k)] + i_draws[(i, j, k)] <=1)
             
-            # Adiciona os pontos previstos pelas variáveis do PuLP
-            for (i, j) in vars_jogos:
-                x_i_j, x_j_i, y_i_j = vars_jogos[(i, j)]
-                
-                if t == i: 
-                    # Se a equipa t é a 'i' na variável, ganha 3 pts com x_i_j e 1 com y_i_j
-                    expressao_pontos += 3 * x_i_j + 1 * y_i_j
-                elif t == j:
-                    # Se a equipa t é a 'j' na variável, ganha 3 pts com x_j_i e 1 com y_i_j
-                    expressao_pontos += 3 * x_j_i + 1 * y_i_j
-                    
-            pontos_finais[t] = expressao_pontos
+            
 
-        # RESTRIÇÃO 2: A equipa alvo tem de ter pontuação >= a todas as outras
+            for k in range(0, qtd):
+                pontos_finais[i] +=  3 * i_wins[(i, j, k)] + 1 * i_draws[(i, j, k)]
+                pontos_finais[j] +=  3 - 3*i_wins[(i, j, k)] - 2 * i_draws[(i, j, k)]
+
+
         for t in range(1, n_equipas + 1):
             if t != alvo:
-                prob += (pontos_finais[alvo] >= pontos_finais[t]), f"Vence_{t}"
+                prob += (pontos_finais[alvo] >= pontos_finais[t])
 
-        # FUNÇÃO OBJETIVO: Minimizar vitórias da equipa alvo
-        # Precisamos de somar todas as variáveis de vitória onde a equipa 'alvo' ganha
         vitorias_alvo = []
-        for (i, j) in vars_jogos:
-            x_i_j, x_j_i, _ = vars_jogos[(i, j)]
-            if alvo == i:
-                vitorias_alvo.append(x_i_j)
-            elif alvo == j:
-                vitorias_alvo.append(x_j_i)
-
-        prob += pulp.lpSum(vitorias_alvo), "Minimizar_Vitorias_Alvo"
+        for(i, j), qtd in games_left.items():
+            for k in range(0, qtd):
+                if alvo == i:
+                    vitorias_alvo.append(i_wins[(i, j, k)])
+                elif alvo == j:
+                    vitorias_alvo.append(1 - i_wins[(i, j, k)] - i_draws[(i, j, k)])
 
 
-        # Resolver (podes especificar o solver se necessário, e.g., GLPK, mas o default serve)
-        status = prob.solve(pulp.PULP_CBC_CMD(msg=0)) # msg=0 esconde o log do solver
+        prob += pulp.lpSum(vitorias_alvo)
 
-        # Verificar resultado
+
+        status = prob.solve(pulp.PULP_CBC_CMD(msg=False))
+
+        if(not vitorias_alvo):
+            print("0")
+            continue
         if pulp.LpStatus[status] == 'Optimal':
-            # O valor da função objetivo é o número mínimo de vitórias
             print(int(pulp.value(prob.objective)))
         else:
-            # Se for 'Infeasible' (Impossível), imprime -1
             print("-1")
-
-    
 
 if __name__ == "__main__":
     solve()

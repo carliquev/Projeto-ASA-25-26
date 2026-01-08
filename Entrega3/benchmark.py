@@ -2,6 +2,7 @@
 """
 Script de Benchmark para o Problema do Campeonato de Futebol
 Gera 11 instâncias com tamanhos incrementais, executa 3 vezes cada e cria gráficos.
+Versão com seed fixa para reprodutibilidade.
 """
 
 import subprocess
@@ -9,6 +10,11 @@ import time
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+
+# SEED FIXA PARA REPRODUTIBILIDADE
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
 
 def gerar_instancia(n, m_jogos_realizados):
     """
@@ -74,6 +80,7 @@ def main():
     print("=" * 90)
     print(f"Solver: {SOLVER_FILE}")
     print(f"Execuções por instância: 3")
+    print(f"Seed: {SEED} (resultados reprodutíveis)")
     print("=" * 90)
 
     # Definir as 11 instâncias com tamanhos incrementais
